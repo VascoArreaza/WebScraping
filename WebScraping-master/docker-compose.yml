@@ -1,0 +1,30 @@
+version: '3.2'
+
+services:
+  python-code:
+    build: .
+    command: python main.py
+    volumes:
+      - .:/code
+    depends_on:
+      - selenium-node-firefox
+    links:
+      - selenium-hub:hub
+
+  selenium-node-firefox:
+    image: selenium/node-firefox:latest
+    links:
+      - selenium-hub:hub
+    environment:
+      HUB_PORT_4444_TCP_ADDR: 'hub'
+      HUB_PORT_4444_TCP_PORT: 4444
+      NODE_MAX_INSTANCES: 3
+      NODE_MAX_SESSION: 5
+    depends_on:
+      - selenium-hub
+
+  selenium-hub:
+    image: selenium/hub:latest
+    ports:
+      - '4444:4444'
+
